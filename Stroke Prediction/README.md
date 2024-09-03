@@ -5,6 +5,20 @@ This data set is used to predict whether a patient is likely to get stroke based
 gender, age, various diseases, and smoking status. Each row in the data provides relevant information about
 the patient.
 
+We have 5110 observations or patients and the features are:
+- id: unique identifier
+- gender: "Male", "Female" or "Other"
+- age: age of the patient
+- hypertension: 0 if the patient doesn't have hypertension, 1 if the patient has hypertension
+- heart_disease: 0 if the patient doesn't have any heart diseases, 1 if the patient has a heart disease
+- ever_married: "No" or "Yes"
+- work_type: "children", "Govt_jov", "Never_worked", "Private" or "Self-employed"
+- Residence_type: "Rural" or "Urban"
+- avg_glucose_level: average glucose level in blood
+- bmi: body mass index
+- smoking_status: "formerly smoked", "never smoked", "smokes" or "Unknown"
+- stroke: 1 if the patient had a stroke or 0 if not
+
 # Objective:
 This project aims to investigate the effectiveness of three ML algorithms for the prediction of stroke.
 
@@ -13,7 +27,7 @@ This project aims to investigate the effectiveness of three ML algorithms for th
 - EDA: univariate analysis, multivariate analysis, correlation.
 - Pre-processing: data cleaning, feature engineering, encoding, scaling, data split, oversampling, undersampling.
 - ML training: Logistic Regression, Decision Tree, Random Forest.
-- Testing: accuracy, precision, recall, f1-score.
+- Testing metrics: accuracy, precision, recall, f1-score.
 - Results
 
 # EDA:
