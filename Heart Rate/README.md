@@ -39,6 +39,16 @@ values can be coded as an “event.” We create a new variable called hd to rep
 t-test or chi-squared test to see which predictors are related to heart disease.
 - The plots and the statistical tests both confirmed that all the three variables age, sex, and maximum heart rate are significantly associated
 with hd.
+
+![unnamed-chunk-4-1](https://github.com/user-attachments/assets/99bc9b55-3c9f-450e-8305-b476d6f9eb0e)
+
+
+![unnamed-chunk-5-1](https://github.com/user-attachments/assets/0151d519-ecab-46aa-8f9f-8c42ab4c131a)
+
+
+![unnamed-chunk-6-1](https://github.com/user-attachments/assets/b304091e-5095-42f4-bdaf-9aa9a3a2d3ff)
+
+
 # Model:
 Multiple Logistic Regression: Accuracy= 0.709,  Classification Error= 0.29,  AUC= 0.706. 
 # Results:
@@ -46,4 +56,7 @@ After these metrics are calculated, we’ll see (from the logistic regression OR
 and having a lower max heart rate are all risk factors for heart disease. We can also apply our model to
 predict the probability of having heart disease. For a 45 years old female who has a max heart rate of 150,
 our model generated a heart disease probability of 0.177 indicating low risk of heart disease.
+
+
+![unnamed-chunk-11-1](https://github.com/user-attachments/assets/fb7e2b54-96de-4270-aeff-f0183b14b94b)
 
