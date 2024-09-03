@@ -25,7 +25,7 @@ probability that a person will have a heart disease in the next year. The model 
 remaining effect of maximum heart rate is after we control or adjust for the effects of the other two effectors.
 
 # Methodology:
-- Collect data from (UC Irvine)[https://archive.ics.uci.edu/dataset/45/heart+disease]
+- Collect data from [UC Irvine](https://archive.ics.uci.edu/dataset/45/heart+disease)
 - EDA: statistical tests, univariate analysis.
 - Pre-processing: data cleaning, feature engineering, encoding.
 - ML training:  Multiple Logistic Regression.
