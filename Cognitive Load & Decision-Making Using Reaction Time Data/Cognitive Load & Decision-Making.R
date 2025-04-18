@@ -43,3 +43,4 @@ ggplot(stroop_long, aes(x = condition, y = rt_ms, fill = condition)) +
 
 # Wide format needed for paired t-test
 t.test(stroop_data$Congruent, stroop_data$Incongruent, paired = TRUE)
+

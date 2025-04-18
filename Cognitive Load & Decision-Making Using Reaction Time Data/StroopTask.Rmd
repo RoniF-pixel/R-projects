@@ -1,0 +1,99 @@
+
+---
+title: 'The Effect of Cognitive Interference on Reaction Time: A Stroop Task Analysis'
+author: "Ronak Fathi"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+#  Abstract
+
+The Stroop task is a classic experimental paradigm in cognitive psychology used to measure selective attention and cognitive interference. This study analyzes response times from an online Stroop task to investigate whether incongruent stimuli (e.g., the word "red" printed in blue) significantly delay reaction time compared to congruent stimuli. Using data from 24 participants and paired t-tests, we find a statistically significant difference in response times between the two conditions, supporting the hypothesis that cognitive interference delays reaction time.
+
+#  Introduction
+
+Cognitive interference, or the Stroop effect, refers to the delay in reaction time when the brain experiences conflicting information. First introduced by John Ridley Stroop in 1935, this phenomenon has been widely studied in cognitive and neuropsychology. The typical Stroop task requires individuals to name the ink color of a word while ignoring the word’s meaning. In incongruent conditions, where the ink color and word do not match, the task becomes cognitively demanding. This report aims to replicate this effect using real data.
+
+#  Methods
+
+## Participants
+
+Data was collected from 24 participants who completed an online version of the Stroop task. Each participant's average response times in congruent and incongruent conditions were recorded.
+
+## Dataset
+
+The dataset is publicly available from [Daniel Lakens' GitHub repository](https://github.com/Lakens/Stroop) and contains the following columns:
+- `Congruent`: Mean reaction time (in seconds) for congruent stimuli
+- `Incongruent`: Mean reaction time (in seconds) for incongruent stimuli
+
+## Analysis
+
+We conduct exploratory data analysis and perform a paired t-test to determine whether there is a significant difference in reaction times between conditions.
+
+```{r load-data}
+# Load data
+setwd("C:/Users/0&1/OneDrive/Documents/R-projects/R-projects/Cognitive Load & Decision-Making Using Reaction Time Data")
+stroop_data = read.csv("stroop.csv")
+
+# Prepare data
+stroop_long <- stroop_data %>%
+  pivot_longer(cols = c(Congruent, Incongruent),
+               names_to = "condition",
+               values_to = "rt_sec") %>%
+  mutate(rt_ms = rt_sec * 1000,
+         condition = factor(condition, levels = c("Congruent", "Incongruent")))
+```
+
+#  Results
+
+## Descriptive Statistics
+
+```{r descriptive}
+stroop_long %>%
+  group_by(condition) %>%
+  summarise(mean_rt = mean(rt_ms),
+            sd_rt = sd(rt_ms),
+            n = n())
+```
+
+## Visualization
+
+```{r plot}
+ggplot(stroop_long, aes(x = condition, y = rt_ms, fill = condition)) +
+  geom_boxplot(alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Reaction Time by Condition",
+       y = "Reaction Time (ms)",
+       x = "Condition") +
+  scale_fill_brewer(palette = "Set1")
+```
+
+## Paired T-Test
+
+```{r t-test}
+t_test_result <- t.test(stroop_data$Congruent, stroop_data$Incongruent, paired = TRUE)
+t_test_result
+```
+
+## Interpretation
+
+The paired t-test reveals a statistically significant difference in reaction time between congruent and incongruent conditions (p < 0.05). On average, participants responded slower in the incongruent condition, consistent with the Stroop effect.
+
+#  Discussion
+
+The results of this analysis confirm the presence of cognitive interference during incongruent Stroop trials. The longer reaction times observed are likely due to increased cognitive load, requiring suppression of the automatic reading process. While the sample size is limited and reaction times are self-reported, this study successfully replicates a classic psychological effect using open data and modern analytical tools in R.
+
+#  References
+
+- Stroop, J. R. (1935). Studies of interference in serial verbal reactions. *Journal of Experimental Psychology*, 18(6), 643–662.
+- MacLeod, C. M. (1991). Half a century of research on the Stroop effect: An integrative review. *Psychological Bulletin*, 109(2), 163–203.
+- Lakens, D. (n.d.). *Stroop Task Dataset*. GitHub. https://github.com/Lakens/Stroop
+
+
