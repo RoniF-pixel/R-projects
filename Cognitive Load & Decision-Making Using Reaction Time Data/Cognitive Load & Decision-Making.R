@@ -40,3 +40,6 @@ ggplot(stroop_long, aes(x = condition, y = rt_ms, fill = condition)) +
        y = "Reaction Time (ms)", x = "Condition") +
   scale_fill_brewer(palette = "Set2")
 
+
+# Wide format needed for paired t-test
+t.test(stroop_data$Congruent, stroop_data$Incongruent, paired = TRUE)
