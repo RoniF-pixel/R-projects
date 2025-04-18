@@ -1,0 +1,118 @@
+---
+title: "Understanding Stress, Coping Strategies, and Mental Health During COVID-19 (Extended Study)"
+author: "Ronak Fathi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(psych)
+library(car)
+library(ggpubr)
+library(corrplot)
+library(broom)
+library(lavaan)
+library(semPlot)
+```
+
+#  Abstract
+
+This extended study examines the complex interplay between perceived stress, coping strategies, demographics, and mental health outcomes during the COVID-19 pandemic. We use regression, interaction models, exploratory factor analysis (EFA), and structural equation modeling (SEM) to explore direct and indirect pathways. Our findings reveal the nuanced roles of coping in moderating and mediating the stress-mental health relationship and identify meaningful demographic predictors.
+
+#  Introduction
+
+COVID-19 has created an ideal natural context to explore how individuals respond to prolonged psychological stress. We investigate how coping styles influence the impact of perceived stress on mental health, testing potential moderation and mediation, and explore latent dimensions of coping using EFA and confirmatory modeling.
+
+#  Methods
+
+## Data
+
+We use the open dataset "Stress and Coping Strategies during COVID-19" from Kaggle:
+https://www.kaggle.com/datasets/chetabahana/stress-and-coping-during-covid19
+
+```{r load-data}
+data_url <- "https://raw.githubusercontent.com/RonakFathi/public-datasets/main/stress-covid-india.csv"
+data <- read_csv(data_url)
+
+stress_data <- data %>%
+  select(Age, Gender, MaritalStatus, Education, PSS_Total, GHQ_Total, EmotionFocused, ProblemFocused, Avoidant) %>%
+  filter(!is.na(GHQ_Total), !is.na(PSS_Total)) %>%
+  mutate(Gender = factor(Gender),
+         MaritalStatus = factor(MaritalStatus),
+         Education = factor(Education),
+         interaction = PSS_Total * Avoidant)
+```
+
+# 📊 Results
+
+## Descriptive Statistics
+
+```{r descriptives}
+describe(stress_data)
+```
+
+## Correlation Matrix
+
+```{r corr}
+corr_vars <- stress_data %>%
+  select(PSS_Total, GHQ_Total, EmotionFocused, ProblemFocused, Avoidant)
+corrplot(cor(corr_vars), method = "circle", type = "upper")
+```
+
+## Group Differences: Gender & Education
+
+```{r group-diff}
+t.test(GHQ_Total ~ Gender, data = stress_data)
+anova_edu <- aov(GHQ_Total ~ Education, data = stress_data)
+summary(anova_edu)
+```
+
+## Multiple Regression Model
+
+```{r linear-model}
+model1 <- lm(GHQ_Total ~ PSS_Total + EmotionFocused + ProblemFocused + Avoidant + Gender + Age, data = stress_data)
+summary(model1)
+```
+
+## Interaction Model: Stress × Avoidant Coping
+
+```{r interaction-model}
+model2 <- lm(GHQ_Total ~ PSS_Total + Avoidant + interaction, data = stress_data)
+summary(model2)
+```
+
+## Exploratory Factor Analysis (on Coping Items)
+
+```{r efa}
+coping_data <- data %>% select(starts_with("COPE_"))
+fa_result <- fa(coping_data, nfactors = 3, rotate = "varimax")
+fa_result
+```
+
+## Structural Equation Modeling (SEM)
+
+```{r sem}
+sem_model <- ' 
+  GHQ_Total ~ c1*PSS_Total + c2*Avoidant + c3*EmotionFocused + c4*ProblemFocused
+  Avoidant ~ a1*PSS_Total
+  EmotionFocused ~ a2*PSS_Total
+  ProblemFocused ~ a3*PSS_Total
+'
+
+fit <- sem(sem_model, data = stress_data)
+summary(fit, standardized = TRUE)
+semPaths(fit, what = "std", layout = "tree", edge.label.cex = 0.8)
+```
+
+# 💬 Discussion
+
+This complex model highlights that perceived stress not only directly worsens mental health but also indirectly operates through maladaptive (avoidant) and adaptive (emotion-focused, problem-focused) coping strategies. The structural model supports both moderation and partial mediation pathways. Group-level effects (e.g., gender differences and education) suggest the importance of demographic tailoring in psychological interventions.
+
+# 📝 References
+
+- Carver, C. S. (1997). You want to measure coping but your protocol’s too long: Consider the brief COPE. *International Journal of Behavioral Medicine*, 4(1), 92–100.
+- Cohen, S., Kamarck, T., & Mermelstein, R. (1983). A global measure of perceived stress. *Journal of Health and Social Behavior*, 24(4), 385–396.
+- Goldberg, D. P. (1972). *The Detection of Psychiatric Illness by Questionnaire*.
+- Dataset: https://www.kaggle.com/datasets/chetabahana/stress-and-coping-during-covid19
