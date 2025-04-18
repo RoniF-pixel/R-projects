@@ -25,3 +25,18 @@ stroop_long <- stroop_long %>%
   mutate(rt_ms = rt_sec * 1000,
          condition = factor(condition, levels = c("Congruent", "Incongruent")))
 
+# Summary stats
+stroop_long %>%
+  group_by(condition) %>%
+  summarise(mean_rt = mean(rt_ms),
+            sd_rt = sd(rt_ms),
+            n = n())
+
+# Boxplot
+ggplot(stroop_long, aes(x = condition, y = rt_ms, fill = condition)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Reaction Time by Condition",
+       y = "Reaction Time (ms)", x = "Condition") +
+  scale_fill_brewer(palette = "Set2")
+
