@@ -1,118 +1,236 @@
+
+
 ---
-title: "Understanding Stress, Coping Strategies, and Mental Health During COVID-19 (Extended Study)"
+title: "Advanced Statistical Analysis of Anxiety and Depression Trends During the
+  COVID-19 Pandemic"
 author: "Ronak Fathi"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
-library(psych)
-library(car)
-library(ggpubr)
-library(corrplot)
+library(lubridate)
+library(scales)
+library(readr)
+library(mgcv)        # GAM
+library(lme4)        # Mixed models
+library(nlme)        # Mixed models (alternative)
+library(car)         # MANOVA
+library(cluster)     # Clustering
+library(factoextra)  # PCA and clustering viz
+library(psych)       # PCA support
 library(broom)
-library(lavaan)
-library(semPlot)
+library(ggpubr)
 ```
 
-#  Abstract
+# Abstract
 
-This extended study examines the complex interplay between perceived stress, coping strategies, demographics, and mental health outcomes during the COVID-19 pandemic. We use regression, interaction models, exploratory factor analysis (EFA), and structural equation modeling (SEM) to explore direct and indirect pathways. Our findings reveal the nuanced roles of coping in moderating and mediating the stress-mental health relationship and identify meaningful demographic predictors.
+This study applies advanced statistical techniques to examine trends in self-reported anxiety and depression symptoms during the COVID-19 pandemic using the CDC Household Pulse Survey. We use generalized linear and additive models, mixed effects models, time series methods, multivariate techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over time and across demographic subgroups.
 
-#  Introduction
+# Introduction
 
-COVID-19 has created an ideal natural context to explore how individuals respond to prolonged psychological stress. We investigate how coping styles influence the impact of perceived stress on mental health, testing potential moderation and mediation, and explore latent dimensions of coping using EFA and confirmatory modeling.
+The COVID-19 pandemic has profoundly impacted public mental health, leading to increased levels of anxiety and depression. To assess these trends, the U.S. Census Bureau and National Center for Health Statistics launched the Household Pulse Survey. This analysis uses advanced statistical modeling to explore temporal dynamics and subgroup differences in mental health outcomes based on this large-scale repeated cross-sectional dataset.
 
-#  Methods
-
-## Data
-
-We use the open dataset "Stress and Coping Strategies during COVID-19" from Kaggle:
-https://www.kaggle.com/datasets/chetabahana/stress-and-coping-during-covid19
-
+# Data Description
 ```{r load-data}
-data_url <- "https://raw.githubusercontent.com/RonakFathi/public-datasets/main/stress-covid-india.csv"
-data <- read_csv(data_url)
-
-stress_data <- data %>%
-  select(Age, Gender, MaritalStatus, Education, PSS_Total, GHQ_Total, EmotionFocused, ProblemFocused, Avoidant) %>%
-  filter(!is.na(GHQ_Total), !is.na(PSS_Total)) %>%
-  mutate(Gender = factor(Gender),
-         MaritalStatus = factor(MaritalStatus),
-         Education = factor(Education),
-         interaction = PSS_Total * Avoidant)
+setwd("C:/Users/0&1/OneDrive/Documents/R-projects/Covid")
+df_raw <- read.csv("Indicators_of_Anxiety_or_Depression.csv")
 ```
 
-# 📊 Results
-
-## Descriptive Statistics
-
-```{r descriptives}
-describe(stress_data)
+```{r clean}
+df <- df_raw %>%
+  rename_with(~ gsub(" ", "_", .x)) %>%
+  rename(
+    indicator = Indicator,
+    group = Group,
+    subgroup = Subgroup,
+    value = Value,
+    low_ci = LowCI,
+    high_ci = HighCI,
+    week = Phase,
+    start_date = TimePeriodStartDate,
+    end_date = TimePeriodEndDate
+  ) %>%
+  mutate(
+    start_date = mdy(start_date),  # fix here
+    end_date = mdy(end_date),      # and here
+    time_numeric = as.numeric(start_date)
+  ) %>%
+  filter(indicator == "Symptoms of Anxiety Disorder or Depressive Disorder") %>%
+  drop_na(value)
 ```
 
-## Correlation Matrix
 
-```{r corr}
-corr_vars <- stress_data %>%
-  select(PSS_Total, GHQ_Total, EmotionFocused, ProblemFocused, Avoidant)
-corrplot(cor(corr_vars), method = "circle", type = "upper")
+# Exploratory Analysis
+
+```{r eda}
+ggplot(df %>% filter(group == "National Estimate"), aes(x = start_date, y = value)) +
+  geom_line(color = "steelblue") +
+  labs(title = "National Trend in Reported Anxiety/Depression", x = "Date", y = "Percentage") +
+  theme_minimal()
+```
+\newpage
+
+# Generalized Linear Model (GLM)
+
+```{r glm}
+glm_model <- glm(value ~ time_numeric, data = df %>% filter(group == "National Estimate"), family = gaussian())
+summary(glm_model)
 ```
 
-## Group Differences: Gender & Education
+## Interpretation:
+- The coefficient for `time_numeric` shows the average change per day.
+- A significant positive slope suggests increasing symptoms over time.
 
-```{r group-diff}
-t.test(GHQ_Total ~ Gender, data = stress_data)
-anova_edu <- aov(GHQ_Total ~ Education, data = stress_data)
-summary(anova_edu)
+# Generalized Additive Model (GAM)
+
+```{r gam}
+gam_model <- gam(value ~ s(time_numeric), data = df %>% filter(group == "National Estimate"))
+summary(gam_model)
+plot(gam_model, se = TRUE, col = "blue", main = "GAM: Nonlinear Trend")
 ```
 
-## Multiple Regression Model
+## Interpretation:
+- `s(time_numeric)` models smooth nonlinear trends.
+- EDF > 1 confirms nonlinearity; p-value shows the trend is significant.
+\newpage
 
-```{r linear-model}
-model1 <- lm(GHQ_Total ~ PSS_Total + EmotionFocused + ProblemFocused + Avoidant + Gender + Age, data = stress_data)
-summary(model1)
+# Linear Mixed Effects Model (LMM)
+
+```{r lmm}
+lmm_data <- df %>% filter(group %in% c("By Age", "By Race/Hispanic ethnicity"))
+lmm <- lmer(value ~ time_numeric + (1|subgroup), data = lmm_data)
+summary(lmm)
 ```
 
-## Interaction Model: Stress × Avoidant Coping
+## Interpretation:
+- Fixed effect = average change over time.
+- Random intercepts allow baseline variation across subgroups.
+\newpage
 
-```{r interaction-model}
-model2 <- lm(GHQ_Total ~ PSS_Total + Avoidant + interaction, data = stress_data)
-summary(model2)
+# Time Series Analysis (LOESS)
+
+```{r ts-loess}
+ts_data <- df %>%
+  filter(group == "National Estimate") %>%
+  group_by(start_date) %>%
+  summarise(mean_value = mean(value))
+
+ggplot(ts_data, aes(x = start_date, y = mean_value)) +
+  geom_point() +
+  geom_smooth(method = "loess", span = 0.3, se = FALSE, color = "darkred") +
+  labs(title = "LOESS Smoothed Trend", y = "Avg % Reporting Symptoms")
 ```
 
-## Exploratory Factor Analysis (on Coping Items)
+## Interpretation:
+- LOESS identifies short-term peaks and dips over time.
+\newpage
 
-```{r efa}
-coping_data <- data %>% select(starts_with("COPE_"))
-fa_result <- fa(coping_data, nfactors = 3, rotate = "varimax")
-fa_result
+# MANOVA
+
+```{r manova}
+# Filter for Age and Race groups
+manova_df <- df %>%
+  filter(group %in% c("By Age", "By Race/Hispanic ethnicity"),
+         !is.na(value)) %>%
+  select(time_numeric, group, subgroup, value)
+
+# Pivot to wide format: subgroup becomes columns
+manova_wide <- manova_df %>%
+  unite(varname, group, subgroup, sep = "_") %>%
+  pivot_wider(names_from = varname, values_from = value) %>%
+  drop_na()
+
+# View shape
+nrow(manova_wide)  # should be > 0
+head(manova_wide)
+
+# Run MANOVA: test effect of time on the set of mental health outcomes by age/race groups
+response_vars <- manova_wide %>% select(-time_numeric)
+fit <- manova(as.matrix(response_vars) ~ time_numeric, data = manova_wide)
+
+# Summary with Wilks' lambda
+summary(fit, test = "Wilks")
+
+
 ```
 
-## Structural Equation Modeling (SEM)
+## Interpretation:
+- Wilks' Lambda tests joint differences across time.
+- Significant result indicates meaningful group-level changes.
+\newpage
 
-```{r sem}
-sem_model <- ' 
-  GHQ_Total ~ c1*PSS_Total + c2*Avoidant + c3*EmotionFocused + c4*ProblemFocused
-  Avoidant ~ a1*PSS_Total
-  EmotionFocused ~ a2*PSS_Total
-  ProblemFocused ~ a3*PSS_Total
-'
+# Principal Component Analysis (PCA)
 
-fit <- sem(sem_model, data = stress_data)
-summary(fit, standardized = TRUE)
-semPaths(fit, what = "std", layout = "tree", edge.label.cex = 0.8)
+```{r pca}
+# Prepare data for PCA
+pca_data <- manova_wide %>%
+  select(-time_numeric)  # only the mental health response variables
+
+# Remove columns with zero variance (constant variables)
+pca_data <- pca_data %>% select(where(~ sd(., na.rm = TRUE) > 0))
+
+# Run PCA with scaling
+pca_result <- prcomp(pca_data, scale. = TRUE)
+
+# View summary of explained variance
+summary(pca_result)
+
+# Scree plot
+library(ggplot2)
+scree_df <- data.frame(PC = paste0("PC", 1:length(pca_result$sdev)),
+                       Variance = pca_result$sdev^2 / sum(pca_result$sdev^2))
+ggplot(scree_df, aes(x = PC, y = Variance)) +
+  geom_col(fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Scree Plot", y = "Proportion of Variance Explained")
+
+
+# Create a data frame of the first few principal components for clustering
+pca_df <- as.data.frame(pca_result$x[, 1:3])  # Use top 3 PCs
+```
+## Interpretation:
+- PCA reveals latent patterns in subgroup responses.
+- PC1 usually captures general trend; others may reflect specific group contrasts.
+\newpage
+
+# Clustering Analysis (K-Means)
+
+```{r clustering}
+clust_data <- scale(na.omit(pca_df))
+k2 <- kmeans(clust_data, centers = 2, nstart = 25)
+fviz_cluster(k2, data = clust_data, main = "K-Means Clustering")
 ```
 
-# 💬 Discussion
+## Interpretation:
+- Clustering groups similar subgroup response patterns.
+- Useful for targeting interventions to specific demographic clusters.
+\newpage
 
-This complex model highlights that perceived stress not only directly worsens mental health but also indirectly operates through maladaptive (avoidant) and adaptive (emotion-focused, problem-focused) coping strategies. The structural model supports both moderation and partial mediation pathways. Group-level effects (e.g., gender differences and education) suggest the importance of demographic tailoring in psychological interventions.
+# Model Diagnostics
 
-# 📝 References
+```{r diagnostics}
+par(mfrow = c(2, 2))
+plot(glm_model)
+#plot(gam_model, residuals = TRUE, pch = 20)
+```
 
-- Carver, C. S. (1997). You want to measure coping but your protocol’s too long: Consider the brief COPE. *International Journal of Behavioral Medicine*, 4(1), 92–100.
-- Cohen, S., Kamarck, T., & Mermelstein, R. (1983). A global measure of perceived stress. *Journal of Health and Social Behavior*, 24(4), 385–396.
-- Goldberg, D. P. (1972). *The Detection of Psychiatric Illness by Questionnaire*.
-- Dataset: https://www.kaggle.com/datasets/chetabahana/stress-and-coping-during-covid19
+## Interpretation:
+- Check assumptions: normality, homoscedasticity, outliers.
+- GAM plots also show if smooths are well-fit.
+\newpage
+
+# Conclusion
+
+The analysis revealed complex, nonlinear trends in self-reported mental health outcomes during the pandemic. Generalized Additive Models captured smooth variation, while Mixed Effects Models showed heterogeneity across subgroups. MANOVA confirmed significant temporal changes by age and race. PCA and clustering exposed latent patterns and helped classify at-risk groups. These findings underscore the importance of advanced analytics for understanding large public health datasets.
+
+# References
+
+- CDC Household Pulse Survey: [https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm](https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm)
+- Wood, S. N. (2017). *Generalized Additive Models: An Introduction with R*.
+- Pinheiro & Bates (2000). *Mixed-Effects Models in S and S-PLUS*.
+- Jolliffe, I. T., & Cadima, J. (2016). *Principal component analysis: a review and recent developments*.
