@@ -17,7 +17,10 @@ We have 16795 observations and the features are:
  - We’re focusing on:
      - Only rows where indicator == "Symptoms of Anxiety Disorder or Depressive Disorder"
      - Rows with non-missing values for the value variable
-     - 
+
+![trend](https://github.com/user-attachments/assets/30723418-7545-45b0-aa00-90116847a3c2)
+
+
 # Objective:
 We use generalized linear and additive models, mixed effects models, time series methods, multivariate
  techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over
