@@ -29,7 +29,9 @@ library(ggpubr)
 
 # Abstract
 
-This study applies advanced statistical techniques to examine trends in self-reported anxiety and depression symptoms during the COVID-19 pandemic using the CDC Household Pulse Survey. We use generalized linear and additive models, mixed effects models, time series methods, multivariate techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over time and across demographic subgroups.
+This study applies advanced statistical techniques to examine trends in self-reported anxiety and depression symptoms during the COVID-19 pandemic using the CDC Household Pulse Survey by the U.S. In other words, this dataset tracks trends in mental health symptoms during the COVID-19 pandemic.
+
+We use generalized linear and additive models, mixed effects models, time series methods, multivariate techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over time and across demographic subgroups.
 
 # Introduction
 
@@ -64,6 +66,17 @@ df <- df_raw %>%
   drop_na(value)
 ```
 
+#### Variables:
+- indicator:	What the data measures (e.g., symptoms of anxiety/depression)
+- group:	Demographic level (e.g., national, by age, gender, etc.)
+- subgroup:	Specific demographic (e.g., 18–29, female, Hispanic, etc.)
+- value:	Reported percentage (%) with symptoms
+- low_ci:	Lower confidence interval
+- high_ci:	Upper confidence interval
+- week:	Survey phase identifier
+- start_date:	Start of survey phase
+- end_date:	End of survey phase
+- time_numeric:	Numeric representation of start date (for modeling)
 
 # Exploratory Analysis
 
@@ -73,6 +86,27 @@ ggplot(df %>% filter(group == "National Estimate"), aes(x = start_date, y = valu
   labs(title = "National Trend in Reported Anxiety/Depression", x = "Date", y = "Percentage") +
   theme_minimal()
 ```
+
+## Interpretation:
+
+1. Temporal Pattern:
+
+- Early 2021: Anxiety/depression levels were above 40%, likely due to COVID surges and societal disruption.
+
+- Mid-2021: A sharp drop around vaccine rollout and partial reopening.
+
+- 2022–2023: The trend plateaued in the low-to-mid 30% range.
+
+- Late 2023 – 2024: A significant decline to around 20–22%, possibly due to data discontinuity, methodological changes, or real improvements.
+
+2. Initial Observations:
+
+- Trend is non-linear, with multiple shifts and volatility, ideal for LOESS or GAM smoothing.
+
+- There may be seasonal effects or external policy-related changes driving the dips/spikes.
+
+- Potential outliers: some sharp, unnatural dips may be worth inspecting (data gaps or anomalies).
+
 \newpage
 
 ### We model the national estimate of mental health symptoms over time using both linear (GLM) and non-linear (GAM) models.
@@ -168,8 +202,7 @@ The confidence bands around the curve show uncertainty is wider in some periods�
 #### Interpretation:
 - LOESS shows the dynamic nature of mental health distress during COVID—how symptom levels didn’t just follow a single trend, but fluctuated in response to real world events (e.g., lockdowns, vaccine rollouts, case surges).
 - Unlike linear models, LOESS respects the local structure of the data—fitting different parts of the time series separately.
-    
-\newpage
+
 
 # MANOVA
 
@@ -211,7 +244,6 @@ Test whether multiple mental health outcomes (e.g., anxiety, depression, worry) 
 #### Interpretation:
 - The significant MANOVA result supports the idea that mental health disparities during COVID are multidimensional—they cannot be captured by a single symptom or outcome.
 - Certain subgroups (e.g., young adults or racial minorities) may experience co-occurring emotional burdens rather than isolated effects.
-     
 
 
 # Principal Component Analysis (PCA)
@@ -308,7 +340,6 @@ We checked assumptions: normality, homoscedasticity, outliers.
 - Interpretation: Point #630 is an influential observation. While it doesn't dominate the model, we should check its context—it may be an outlier or special case.
 
 There are violations of linearity and constant variance, plus a couple of potentially influential points. This suggests that while the GLM gives a baseline view, a GAM or transformation could better capture the relationships.
-
 
 # Conclusion
 
