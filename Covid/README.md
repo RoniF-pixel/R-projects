@@ -1,61 +1,60 @@
-# Data Description:
-This analysis uses advanced statistical modeling to explore
- temporal dynamics and subgroup differences in mental health outcomes based on this large-scale repeated
- cross-sectional dataset.
- 
-We have 16795 observations and the features are:
- - indicator: What the data measures (e.g., symptoms of anxiety/depression)
- - group: Demographic level (e.g., national, by age, gender, etc.)
- - subgroup: Specific demographic (e.g., 18–29, female, Hispanic, etc.)
- - value: Reported percentage (%) with symptoms
- - low_ci: Lower confidence interval
- - high_ci: Upper confidence interval
- - week: Survey phase identifier
- - start_date: Start of survey phase
- - end_date: End of survey phase
- - time_numeric: Numeric representation of start date (for modeling)
- - We’re focusing on:
-     - Only rows where indicator == "Symptoms of Anxiety Disorder or Depressive Disorder"
-     - Rows with non-missing values for the value variable
+#  Mental Health Trends During COVID-19  
+**Advanced Statistical Analysis of Anxiety and Depression Indicators in the U.S.**  
+**Author**: Ronak Fathi
 
-![trend](https://github.com/user-attachments/assets/30723418-7545-45b0-aa00-90116847a3c2)
+##  Overview  
+This project uses advanced statistical methods to analyze trends in anxiety and depression symptoms during the COVID-19 pandemic using the CDC's Household Pulse Survey. We explored both national-level and subgroup-level patterns across time, applying models like GAM, LMM, and PCA to detect non-linear trends and demographic disparities.
 
+---
 
-# Objective:
-We use generalized linear and additive models, mixed effects models, time series methods, multivariate
- techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over
- time and across demographic subgroups.
+##  Dataset Description  
+- **Source**: [CDC Household Pulse Survey](https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm)  
+- **Scope**: U.S. adults reporting symptoms of anxiety and/or depression from 2020 to 2024  
+- **Variables**:  
+  - `indicator`: Type of symptom reported  
+  - `group`: Demographic category (e.g., age, race)  
+  - `subgroup`: Specific group (e.g., 18–29, Hispanic)  
+  - `value`: Percent reporting symptoms  
+  - `start_date` / `end_date`: Survey time window  
+  - `time_numeric`: Encoded numeric date for modeling
 
-# Methodology:
-- Collect data from [National Center for Health Statistics- Anxiety and Depression](https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm)
+---
 
-- EDA (Exploratory Data Analysis):
+##  Methodology  
 
-   - Time trend visualization using line plots.
+- **Preprocessing**:
+  - Cleaned variable names and handled missing data
+  - Converted time into numeric format
+  - Filtered only records related to anxiety/depression symptoms  
 
-   - Descriptive summaries of mental health indicators.
+- **Exploratory Data Analysis**:
+  - Visualized national trends with time series plots
+  - Identified nonlinear trends, seasonal effects, and possible outliers  
 
-   - PCA and clustering to explore latent patterns and groupings.
+- **Modeling & Statistical Analysis**:
+  - 📉 **GLM**: Modeled linear time trend; found significant increase over time  
+  - 📈 **GAM**: Captured flexible, nonlinear patterns in national-level trends  
+  - 👥 **LMM**: Modeled subgroup-specific symptom trajectories with random effects  
+  - ⏱️ **LOESS**: Visualized local trend fluctuations over weeks  
+  - 🧪 **MANOVA**: Confirmed significant differences across demographic subgroups  
+  - 📦 **PCA**: Reduced dimensionality and identified underlying symptom patterns  
+  - 🔗 **Clustering**: Grouped subgroups with similar temporal response profiles  
 
-# Pre-processing:
+- **Model Diagnostics**:
+  - Plotted residuals, Q-Q, and Cook's distance for GLM
+  - Found some non-linearity and heteroscedasticity, supporting need for GAM
 
-- Renamed and formatted variables for consistency.
+---
 
-- Converted date columns and encoded time numerically.
+##  Key Findings
 
-- Filtered data to focus on key indicators and removed missing values.
-
-# Analysis & Results:
-
-- LOESS and GAM models captured smooth nonlinear time trends.
-
-- MANOVA revealed significant differences across subgroups.
-
-- PCA reduced dimensionality and revealed grouping structure.
-
-- Clustering identified demographic clusters with similar symptom patterns.
-
-- Model diagnostics (residuals, QQ plots) confirmed reasonable model fit.
+- **Symptom rates peaked** early in the pandemic and declined by 2024, though nonlinearly  
+- **Subgroups (e.g., age, race)** showed differing baseline levels and trends  
+- **GAM and LOESS** provided smoother, more accurate trend representations  
+- **LMM** revealed group-level differences not visible in fixed-effect models  
+- **PCA** showed PC1 linked to symptom severity, PC2 to variability over time  
+- **K-means clustering** revealed demographic groupings with shared mental health trajectories  
+- **MANOVA** confirmed that symptom trends were significantly different across age and race categories
 
 
 
