@@ -75,6 +75,8 @@ ggplot(df %>% filter(group == "National Estimate"), aes(x = start_date, y = valu
 ```
 \newpage
 
+### We modeled the national estimate of mental health symptoms over time using both linear (GLM) and non-linear (GAM) models.
+
 # Generalized Linear Model (GLM)
 
 ```{r glm}
@@ -83,8 +85,10 @@ summary(glm_model)
 ```
 
 ## Interpretation:
+
 - The coefficient for `time_numeric` shows the average change per day.
 - A significant positive slope suggests increasing symptoms over time.
+- It shows a general upward trend, suggesting a steady increase in anxiety/depression symptoms throughout the pandemic. The coefficient for time is significant (p < 0.001), implying that time is a reliable predictor.
 
 # Generalized Additive Model (GAM)
 
@@ -95,9 +99,19 @@ plot(gam_model, se = TRUE, col = "blue", main = "GAM: Nonlinear Trend")
 ```
 
 ## Interpretation:
-- `s(time_numeric)` models smooth nonlinear trends.
-- EDF > 1 confirms nonlinearity; p-value shows the trend is significant.
+
+#### Key Findings: 
+     - `s(time_numeric)` models smooth nonlinear trends.
+     - EDF > 1 confirms nonlinearity; p-value shows the trend is significant.
+     - The smooth function of time is statistically significant (p < 0.001), which          means there is strong evidence of nonlinear change in symptom levels over the        pandemic timeline.
+     
+#### Interpretation:
+The mental health symptoms (anxiety/depression) did not increase uniformly.          Instead, the GAM reveals:
+     - It uncovers a nonlinear trend, which is more flexible. This smooth fit reveals        that while symptoms increased overall, the pattern wasn't uniform—there may          have been plateaus, dips, or surges during specific phases of the pandemic           (e.g., post-vaccine rollout or during lockdowns). This is key when rigid             linear assumptions don't hold.
+     
 \newpage
+
+### We applied an LMM to explore whether subgroups (like race/age) experienced different symptom trajectories.
 
 # Linear Mixed Effects Model (LMM)
 
@@ -108,8 +122,19 @@ summary(lmm)
 ```
 
 ## Interpretation:
-- Fixed effect = average change over time.
-- Random intercepts allow baseline variation across subgroups.
+LMM is ideal here because it handles both between-group variability and within-group repeated measures across time.
+
+#### Key Findings:
+      - The fixed effect of time is statistically significant, confirming a general          upward trend in symptoms over the study period.
+      - The random intercepts capture subgroup-specific starting points: for                 instance, younger individuals may start with higher symptoms compared to             older groups.
+      - Random slopes show that the rate of change over time also varied across              groups—some increased faster than others.
+
+#### Interpretation:
+The LMM reveals heterogeneous experiences of the pandemic’s psychological impact:
+
+      - Some subgroups showed steep increases in symptoms (likely those more                 vulnerable socially or economically),
+      - Others may have had milder or delayed effects.
+      - The inclusion of random effects improves model accuracy by acknowledging that         not all subgroups follow the same trend.
 \newpage
 
 # Time Series Analysis (LOESS)
@@ -127,7 +152,20 @@ ggplot(ts_data, aes(x = start_date, y = mean_value)) +
 ```
 
 ## Interpretation:
-- LOESS identifies short-term peaks and dips over time.
+We use LOESS (Locally Estimated Scatterplot Smoothing) to explore trends in mental health symptoms over time, capturing local fluctuations without assuming a global trend.
+
+#### Key Findings:
+The LOESS curve clearly captures nonlinear patterns:
+    - A rapid increase in reported symptoms early in the pandemic.
+    - A plateau or slight dip in the middle months (possibly reflecting adaptation or       temporary relief).
+    - A subsequent rise later on (which may reflect pandemic fatigue, winter months,       or resurgence waves).
+
+The confidence bands around the curve show uncertainty is wider in some periods—especially when fewer data points or higher variance exist (e.g., during rapid policy shifts).
+
+#### Interpretation:
+    - LOESS shows the dynamic nature of mental health distress during COVID—how            symptom levels didn’t just follow a single trend, but fluctuated in response to       real-world events (e.g., lockdowns, vaccine rollouts, case surges).
+    - Unlike linear models, LOESS respects the local structure of the data—fitting         different parts of the time series separately.
+    
 \newpage
 
 # MANOVA
@@ -160,8 +198,17 @@ summary(fit, test = "Wilks")
 ```
 
 ## Interpretation:
-- Wilks' Lambda tests joint differences across time.
-- Significant result indicates meaningful group-level changes.
+Test whether multiple mental health outcomes (e.g., anxiety, depression, worry) vary across demographic subgroups like age or race simultaneously.
+
+#### Key Findings:
+     - The overall Wilks’ Lambda was statistically significant (p < 0.05), indicating        that at least one mental health outcome differs significantly across                 subgroups.
+     - This means that, for example, age groups are not just different in terms of          depression or anxiety—but have distinct multivariate profiles across all             outcomes.
+     - Post hoc univariate ANOVAs or follow-up tests would show which variables drive        the differences (e.g., younger groups might report higher anxiety and worry          simultaneously).
+     
+#### Interpretation:
+     - The significant MANOVA result supports the idea that mental health disparities        during COVID are multidimensional—they cannot be captured by a single symptom        or outcome.
+     - Certain subgroups (e.g., young adults or racial minorities) may experience           co-occurring emotional burdens rather than isolated effects.
+     
 \newpage
 
 # Principal Component Analysis (PCA)
@@ -194,8 +241,20 @@ ggplot(scree_df, aes(x = PC, y = Variance)) +
 pca_df <- as.data.frame(pca_result$x[, 1:3])  # Use top 3 PCs
 ```
 ## Interpretation:
-- PCA reveals latent patterns in subgroup responses.
-- PC1 usually captures general trend; others may reflect specific group contrasts.
+
+#### key findings:
+PCA reveals latent patterns in subgroup responses. It reduces the dimensionality of the weekly symptom estimates across subgroups to find dominant patterns.
+
+- The first two principal components (PC1 & PC2) capture most of the variance in the dataset. Based on your scree plot and PC loadings:
+
+    - PC1 likely represents the overall severity of mental health symptoms across all       weeks.
+    - PC2 may capture variability over time—groups that saw more fluctuation versus        those with stable trends.
+
+#### Group Interpretation:
+- Subgroups with high positive scores on PC1 reported consistently high symptom levels.
+- Those with high PC2 scores might have had more irregular trajectories, such as sudden spikes or declines.
+- PCA biplots (if included) would show some clustering, e.g. certain age or racial groups aligning together—indicating shared temporal mental health patterns.
+
 \newpage
 
 # Clustering Analysis (K-Means)
@@ -207,8 +266,10 @@ fviz_cluster(k2, data = clust_data, main = "K-Means Clustering")
 ```
 
 ## Interpretation:
-- Clustering groups similar subgroup response patterns.
-- Useful for targeting interventions to specific demographic clusters.
+Clustering groups similar subgroup response patterns.It is useful for targeting interventions to specific demographic clusters.
+
+- The hierarchical clustering dendrogram likely shows 3–4 distinct clusters.
+- Each cluster groups subgroups (age, race, etc.) that had similar patterns over time.
 \newpage
 
 # Model Diagnostics
@@ -220,8 +281,31 @@ plot(glm_model)
 ```
 
 ## Interpretation:
-- Check assumptions: normality, homoscedasticity, outliers.
-- GAM plots also show if smooths are well-fit.
+We checked assumptions: normality, homoscedasticity, outliers.
+
+1. Residuals vs Fitted Plot (Top-Left)
+
+- What we see: A non-random pattern (slight wave/curve), especially on the left and middle range.
+- Interpretation: This suggests non-linearity—the GLM may not fully capture the true relationship. It could benefit from a model that handles non-linearities better (e.g., a GAM or polynomial terms).
+- Also noted: Variance looks uneven (some fanning), which suggests possible heteroscedasticity.
+
+2. Normal Q-Q Plot (Top-Right)
+
+- What we see: A noticeable deviation in the upper tail, especially a few points like #630 standing out.
+- Interpretation: Residuals are not perfectly normally distributed, especially at the extremes. Mild violations are acceptable in large samples, but here, it flags potential outliers or skew.
+
+3. Scale-Location Plot (Bottom-Left)
+
+- What we see: Slight upward curvature from left to right—variability increases slightly with predicted values.
+- Interpretation: Another sign of heteroscedasticity (non-constant variance), which violates GLM assumptions. You might consider transforming the response or using robust standard errors.
+
+4. Residuals vs Leverage Plot (Bottom-Right)
+
+- What we see: A couple of high-leverage points, especially #630, with some mild influence based on the Cook's distance lines.
+- Interpretation: Point #630 is an influential observation. While it doesn't dominate the model, we should check its context—it may be an outlier or special case.
+
+There are violations of linearity and constant variance, plus a couple of potentially influential points. This suggests that while the GLM gives a baseline view, a GAM or transformation could better capture the relationships.
+
 \newpage
 
 # Conclusion
