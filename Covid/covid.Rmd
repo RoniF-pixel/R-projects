@@ -75,7 +75,7 @@ ggplot(df %>% filter(group == "National Estimate"), aes(x = start_date, y = valu
 ```
 \newpage
 
-### We modeled the national estimate of mental health symptoms over time using both linear (GLM) and non-linear (GAM) models.
+### We model the national estimate of mental health symptoms over time using both linear (GLM) and non-linear (GAM) models.
 
 # Generalized Linear Model (GLM)
 
@@ -107,6 +107,7 @@ plot(gam_model, se = TRUE, col = "blue", main = "GAM: Nonlinear Trend")
      
 #### Interpretation:
 The mental health symptoms (anxiety/depression) did not increase uniformly.          Instead, the GAM reveals:
+
 - It uncovers a nonlinear trend, which is more flexible. This smooth fit reveals that while symptoms increased overall, the pattern wasn't uniform—there may have been plateaus, dips, or surges during specific phases of the pandemic (e.g., post-vaccine rollout or during lockdowns). This is key when rigid linear assumptions don't hold.
      
 \newpage
@@ -165,7 +166,7 @@ The LOESS curve clearly captures nonlinear patterns:
 The confidence bands around the curve show uncertainty is wider in some periods—especially when fewer data points or higher variance exist (e.g., during rapid policy shifts).
 
 #### Interpretation:
-- LOESS shows the dynamic nature of mental health distress during COVID—how symptom levels didn’t just follow a single trend, but fluctuated in response to       real world events (e.g., lockdowns, vaccine rollouts, case surges).
+- LOESS shows the dynamic nature of mental health distress during COVID—how symptom levels didn’t just follow a single trend, but fluctuated in response to real world events (e.g., lockdowns, vaccine rollouts, case surges).
 - Unlike linear models, LOESS respects the local structure of the data—fitting different parts of the time series separately.
     
 \newpage
@@ -211,7 +212,7 @@ Test whether multiple mental health outcomes (e.g., anxiety, depression, worry) 
 - The significant MANOVA result supports the idea that mental health disparities during COVID are multidimensional—they cannot be captured by a single symptom or outcome.
 - Certain subgroups (e.g., young adults or racial minorities) may experience co-occurring emotional burdens rather than isolated effects.
      
-\newpage
+
 
 # Principal Component Analysis (PCA)
 
@@ -247,7 +248,7 @@ pca_df <- as.data.frame(pca_result$x[, 1:3])  # Use top 3 PCs
 #### key findings:
 PCA reveals latent patterns in subgroup responses. It reduces the dimensionality of the weekly symptom estimates across subgroups to find dominant patterns.
 
-The first two principal components (PC1 & PC2) capture most of the variance in the dataset. Based on your scree plot and PC loadings:
+The first two principal components (PC1 & PC2) capture most of the variance in the dataset. Based on our plots:
 
 - PC1 likely represents the overall severity of mental health symptoms across all weeks.
 - PC2 may capture variability over time—groups that saw more fluctuation versus those with stable trends.
@@ -257,7 +258,7 @@ The first two principal components (PC1 & PC2) capture most of the variance in t
 - Those with high PC2 scores might have had more irregular trajectories, such as sudden spikes or declines.
 - PCA biplots (if included) would show some clustering, e.g. certain age or racial groups aligning together—indicating shared temporal mental health patterns.
 
-\newpage
+
 
 # Clustering Analysis (K-Means)
 
@@ -308,7 +309,6 @@ We checked assumptions: normality, homoscedasticity, outliers.
 
 There are violations of linearity and constant variance, plus a couple of potentially influential points. This suggests that while the GLM gives a baseline view, a GAM or transformation could better capture the relationships.
 
-\newpage
 
 # Conclusion
 
