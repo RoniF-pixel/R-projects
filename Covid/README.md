@@ -57,6 +57,30 @@ This project uses advanced statistical methods to analyze trends in anxiety and 
 - **MANOVA** confirmed that symptom trends were significantly different across age and race categories
 
 
+---
+
+##  Tools & Packages
+
+- R, R Markdown  
+- `tidyverse`, `ggplot2`, `lubridate`, `mgcv`, `lme4`, `factoextra`, `cluster`  
+- Statistical methods: GLM, GAM, LMM, MANOVA, PCA, LOESS, K-means
+
+---
+
+##  References
+
+- CDC Household Pulse Survey: [link](https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm ) 
+- Wood, S. (2017). *Generalized Additive Models: An Introduction with R*  
+- Pinheiro & Bates (2000). *Mixed-Effects Models in S and S-PLUS*  
+- Jolliffe, I. & Cadima, J. (2016). *Principal Component Analysis: A Review*
+
+---
+
+##  Conclusion
+
+This project demonstrates how a combination of statistical modeling, multivariate analysis, and visualization techniques can uncover complex, evolving mental health patterns during a global crisis. Our findings highlight the importance of using flexible, subgroup-sensitive models to inform public health insights and interventions.
+
+
 
 
 
