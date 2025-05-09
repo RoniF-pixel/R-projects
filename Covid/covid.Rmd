@@ -18,10 +18,10 @@ output:
 4. Key Concepts  
 5. Context  
 6. Project Overview  
-   What We Learned  
-7. Recommendations  
-8. References  
-9. Appendix A: Methodology  
+7. What We Learned  
+8. Recommendations  
+9. References  
+10. Appendix A: Methodology  
 
 
 # Preface
@@ -60,21 +60,22 @@ We explored mental health symptom prevalence using generalized additive and line
 
 
 ## What We Learned
+
 Through a series of advanced statistical models applied to the CDC Household Pulse Survey, we derived several key findings from our COVID-19 mental health analysis:
 
-Generalized Additive Models (GAMs) showed clear non-linear trends in anxiety and depression symptoms at the national level. Symptom prevalence peaked above 40% in early 2021, aligned with lockdowns and case surges, then gradually declined into 2023–2024. The GAMs successfully captured plateaus and inflection points missed by linear models.
+- Generalized Additive Models (GAMs) showed clear non-linear trends in anxiety and depression symptoms at the national level. Symptom prevalence peaked above 40% in early 2021, aligned with lockdowns and case surges, then gradually declined into 2023–2024. The GAMs successfully captured plateaus and inflection points missed by linear models.
 
-Linear Mixed Effects Models (LMMs) revealed that younger adults (ages 18–29) and racial/ethnic minorities had higher baseline distress and experienced steeper increases in symptoms over time. These results confirm the existence of demographic disparities and highlight the heterogeneous psychological impact of the pandemic across subgroups.
+- Linear Mixed Effects Models (LMMs) revealed that younger adults (ages 18–29) and racial/ethnic minorities had higher baseline distress and experienced steeper increases in symptoms over time. These results confirm the existence of demographic disparities and highlight the heterogeneous psychological impact of the pandemic across subgroups.
 
-LOESS smoothing supported the GAM results by showing local fluctuations in symptoms, including temporary dips during periods of policy relaxation and subsequent spikes corresponding to new COVID-19 waves.
+- LOESS smoothing supported the GAM results by showing local fluctuations in symptoms, including temporary dips during periods of policy relaxation and subsequent spikes corresponding to new COVID-19 waves.
 
-MANOVA confirmed that multiple mental health outcomes (e.g., anxiety, depression, worry) shifted significantly over time and varied across demographic groups. This supports the interpretation that mental health burden was not isolated to a single dimension but occurred across multiple emotional domains simultaneously.
+- MANOVA confirmed that multiple mental health outcomes (e.g., anxiety, depression, worry) shifted significantly over time and varied across demographic groups. This supports the interpretation that mental health burden was not isolated to a single dimension but occurred across multiple emotional domains simultaneously.
 
-Principal Component Analysis (PCA) identified two major dimensions of mental health trajectories: one representing overall severity, and the other capturing temporal volatility. Subgroups such as younger adults and Black or Hispanic individuals tended to load higher on both components, indicating persistent and erratic symptom patterns.
+- Principal Component Analysis (PCA) identified two major dimensions of mental health trajectories: one representing overall severity, and the other capturing temporal volatility. Subgroups such as younger adults and Black or Hispanic individuals tended to load higher on both components, indicating persistent and erratic symptom patterns.
 
-K-means clustering grouped demographic subgroups into distinct mental health trajectory types — for example, “consistently high distress,” “moderate but improving,” and “low and stable.” These clusters can inform targeted mental health interventions, allowing resources to be directed toward groups most in need.
+- K-means clustering grouped demographic subgroups into distinct mental health trajectory types — for example, “consistently high distress,” “moderate but improving,” and “low and stable.” These clusters can inform targeted mental health interventions, allowing resources to be directed toward groups most in need.
 
-Model diagnostics suggested that non-linearity, heteroscedasticity, and outliers were present in the data, affirming the use of GAMs and mixed models as superior to traditional linear approaches for these data.
+- Model diagnostics suggested that non-linearity, heteroscedasticity, and outliers were present in the data, affirming the use of GAMs and mixed models as superior to traditional linear approaches for these data.
 
 Overall, the analysis demonstrated that the psychological impact of COVID-19 in the United States was dynamic, non-uniform, and deeply stratified by age and race. These findings reinforce the value of flexible statistical modeling for uncovering nuanced public health patterns and inform more equitable policy decisions moving forward.
 
