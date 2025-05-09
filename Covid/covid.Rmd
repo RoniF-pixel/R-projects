@@ -4,11 +4,98 @@
 title: "Advanced Statistical Analysis of Anxiety and Depression Trends During the
   COVID-19 Pandemic"
 author: "Ronak Fathi"
-date: "`r Sys.Date()`"
+date: "April 20, 2025"
 output:
   pdf_document: default
   html_document: default
 ---
+
+# Contents
+
+1. Preface  
+2. Introduction  
+3. Executive Summary  
+4. Key Concepts  
+5. Context  
+6. Project Overview  
+   What We Learned  
+7. Recommendations  
+8. References  
+9. Appendix A: Methodology  
+
+
+# Preface
+
+This study applies advanced statistical techniques to examine trends in self-reported anxiety and depression symptoms during the COVID-19 pandemic using the CDC Household Pulse Survey by the U.S. In other words, this dataset tracks trends in mental health symptoms during the COVID-19 pandemic.
+
+The author conducted this work as part of a broader effort to understand how advanced data modeling can inform public health and community resilience policies.We use generalized linear and additive models, mixed effects models, time series methods, multivariate techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over time and across demographic subgroups.
+
+# Introduction
+
+The global outbreak of COVID-19 brought forth a parallel crisis: widespread mental health challenges. This study analyzes national data to uncover temporal and demographic trends in reported anxiety and depression. Our goal is to use robust statistical techniques to better understand the human cost of the pandemic and inform future intervention strategies.
+
+# Executive Summary
+
+Advanced statistical modeling reveals clear peaks in psychological distress during periods of social restrictions and COVID-19 surges. Younger adults and racial/ethnic minority groups consistently reported higher levels of distress, indicating systemic disparities in pandemic-related mental health burdens.
+
+Flexible modeling techniques such as Generalized Additive Models (GAMs) and Linear Mixed Effects Models (LMMs) allowed for the detection of nuanced patterns that traditional models may overlook. Additional multivariate methods — Principal Component Analysis (PCA), MANOVA, and clustering — helped uncover hidden subgroup structures and trajectory types.
+
+These findings emphasize the need for targeted, data-driven mental health interventions — particularly for youth and vulnerable demographic groups — and suggest that integrating statistical modeling into public health systems can support more responsive and equitable policy planning.
+
+# Key Concepts
+
+- **GAMs**: Flexible regression models allowing smooth, non-linear relationships.
+- **LMMs**: Models accounting for both fixed and random effects in hierarchical data.
+- **MANOVA**: Multivariate ANOVA to test differences across multiple outcomes.
+- **PCA**: Reduces dimensionality to identify key patterns in symptom trends.
+- **Clustering**: Groups subpopulations based on statistical similarity.
+
+# Context
+
+This project uses data from the CDC Household Pulse Survey, designed to rapidly assess public well-being during the pandemic. Collected from 2020 through early 2024, the survey includes weekly estimates of anxiety and depression symptoms among U.S. adults. Demographic variables include age, gender, and race/ethnicity.
+
+# Project Overview
+
+We explored mental health symptom prevalence using generalized additive and linear mixed-effects models. The focus was on subgroup disparities and time-based changes. The CDC dataset provided reliable, repeated cross-sectional survey responses with high temporal resolution.
+
+
+## What We Learned
+Through a series of advanced statistical models applied to the CDC Household Pulse Survey, we derived several key findings from our COVID-19 mental health analysis:
+
+Generalized Additive Models (GAMs) showed clear non-linear trends in anxiety and depression symptoms at the national level. Symptom prevalence peaked above 40% in early 2021, aligned with lockdowns and case surges, then gradually declined into 2023–2024. The GAMs successfully captured plateaus and inflection points missed by linear models.
+
+Linear Mixed Effects Models (LMMs) revealed that younger adults (ages 18–29) and racial/ethnic minorities had higher baseline distress and experienced steeper increases in symptoms over time. These results confirm the existence of demographic disparities and highlight the heterogeneous psychological impact of the pandemic across subgroups.
+
+LOESS smoothing supported the GAM results by showing local fluctuations in symptoms, including temporary dips during periods of policy relaxation and subsequent spikes corresponding to new COVID-19 waves.
+
+MANOVA confirmed that multiple mental health outcomes (e.g., anxiety, depression, worry) shifted significantly over time and varied across demographic groups. This supports the interpretation that mental health burden was not isolated to a single dimension but occurred across multiple emotional domains simultaneously.
+
+Principal Component Analysis (PCA) identified two major dimensions of mental health trajectories: one representing overall severity, and the other capturing temporal volatility. Subgroups such as younger adults and Black or Hispanic individuals tended to load higher on both components, indicating persistent and erratic symptom patterns.
+
+K-means clustering grouped demographic subgroups into distinct mental health trajectory types — for example, “consistently high distress,” “moderate but improving,” and “low and stable.” These clusters can inform targeted mental health interventions, allowing resources to be directed toward groups most in need.
+
+Model diagnostics suggested that non-linearity, heteroscedasticity, and outliers were present in the data, affirming the use of GAMs and mixed models as superior to traditional linear approaches for these data.
+
+Overall, the analysis demonstrated that the psychological impact of COVID-19 in the United States was dynamic, non-uniform, and deeply stratified by age and race. These findings reinforce the value of flexible statistical modeling for uncovering nuanced public health patterns and inform more equitable policy decisions moving forward.
+
+# Recommendations
+
+- Fund and expand mental health infrastructure targeting youth and minorities.
+- Continue periodic psychological surveys to monitor national well-being.
+- Train public health staff in advanced modeling to support real-time decision-making.
+- Integrate multivariate dashboards in policy reports to track emerging patterns.
+
+# References
+
+- CDC Household Pulse Survey: [https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm](https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm)
+- Wood, S. N. (2017). *Generalized Additive Models: An Introduction with R*.
+- Pinheiro & Bates (2000). *Mixed-Effects Models in S and S-PLUS*.
+- Jolliffe, I. T., & Cadima, J. (2016). *Principal component analysis: a review and recent developments*.
+
+
+\newpage
+
+# Appendix A: Methodology
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -27,15 +114,6 @@ library(broom)
 library(ggpubr)
 ```
 
-# Abstract
-
-This study applies advanced statistical techniques to examine trends in self-reported anxiety and depression symptoms during the COVID-19 pandemic using the CDC Household Pulse Survey by the U.S. In other words, this dataset tracks trends in mental health symptoms during the COVID-19 pandemic.
-
-We use generalized linear and additive models, mixed effects models, time series methods, multivariate techniques like PCA and MANOVA, and clustering to understand how mental health patterns evolved over time and across demographic subgroups.
-
-# Introduction
-
-The COVID-19 pandemic has profoundly impacted public mental health, leading to increased levels of anxiety and depression. To assess these trends, the U.S. Census Bureau and National Center for Health Statistics launched the Household Pulse Survey. This analysis uses advanced statistical modeling to explore temporal dynamics and subgroup differences in mental health outcomes based on this large-scale repeated cross-sectional dataset.
 
 # Data Description
 ```{r load-data}
@@ -65,7 +143,6 @@ df <- df_raw %>%
   filter(indicator == "Symptoms of Anxiety Disorder or Depressive Disorder") %>%
   drop_na(value)
 ```
-
 #### Variables:
 - indicator:	What the data measures (e.g., symptoms of anxiety/depression)
 - group:	Demographic level (e.g., national, by age, gender, etc.)
@@ -107,7 +184,7 @@ ggplot(df %>% filter(group == "National Estimate"), aes(x = start_date, y = valu
 
 - Potential outliers: some sharp, unnatural dips may be worth inspecting (data gaps or anomalies).
 
-\newpage
+
 
 ### We model the national estimate of mental health symptoms over time using both linear (GLM) and non-linear (GAM) models.
 
@@ -341,13 +418,4 @@ We checked assumptions: normality, homoscedasticity, outliers.
 
 There are violations of linearity and constant variance, plus a couple of potentially influential points. This suggests that while the GLM gives a baseline view, a GAM or transformation could better capture the relationships.
 
-# Conclusion
 
-The analysis revealed complex, nonlinear trends in self-reported mental health outcomes during the pandemic. Generalized Additive Models captured smooth variation, while Mixed Effects Models showed heterogeneity across subgroups. MANOVA confirmed significant temporal changes by age and race. PCA and clustering exposed latent patterns and helped classify at-risk groups. These findings underscore the importance of advanced analytics for understanding large public health datasets.
-
-# References
-
-- CDC Household Pulse Survey: [https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm](https://www.cdc.gov/nchs/covid19/pulse/mental-health.htm)
-- Wood, S. N. (2017). *Generalized Additive Models: An Introduction with R*.
-- Pinheiro & Bates (2000). *Mixed-Effects Models in S and S-PLUS*.
-- Jolliffe, I. T., & Cadima, J. (2016). *Principal component analysis: a review and recent developments*.
