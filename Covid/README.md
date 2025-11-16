@@ -32,13 +32,13 @@ This project uses advanced statistical methods to analyze trends in anxiety and 
   - Identified nonlinear trends, seasonal effects, and possible outliers  
 
 - **Modeling & Statistical Analysis**:
-  - 📉 **GLM**: Modeled linear time trend; found significant increase over time  
-  - 📈 **GAM**: Captured flexible, nonlinear patterns in national-level trends  
-  - 👥 **LMM**: Modeled subgroup-specific symptom trajectories with random effects  
-  - ⏱️ **LOESS**: Visualized local trend fluctuations over weeks  
-  - 🧪 **MANOVA**: Confirmed significant differences across demographic subgroups  
-  - 📦 **PCA**: Reduced dimensionality and identified underlying symptom patterns  
-  - 🔗 **Clustering**: Grouped subgroups with similar temporal response profiles  
+  -  **GLM**: Modeled linear time trend; found significant increase over time  
+  -  **GAM**: Captured flexible, nonlinear patterns in national-level trends  
+  -  **LMM**: Modeled subgroup-specific symptom trajectories with random effects  
+  -  **LOESS**: Visualized local trend fluctuations over weeks  
+  -  **MANOVA**: Confirmed significant differences across demographic subgroups  
+  -  **PCA**: Reduced dimensionality and identified underlying symptom patterns  
+  -  **Clustering**: Grouped subgroups with similar temporal response profiles  
 
 - **Model Diagnostics**:
   - Plotted residuals, Q-Q, and Cook's distance for GLM
